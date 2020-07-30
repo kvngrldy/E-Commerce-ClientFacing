@@ -6,7 +6,7 @@ class cartController {
         const product_id = req.params.id
         Cart.findAll({
             where: {
-                user_id: user_id, product_id: product_id
+                user_id: user_id, product_id: product_id, status: false
             }
         })
             .then(carts => {
@@ -46,7 +46,10 @@ class cartController {
             include: [{
                 model: Product,
                 attributes: ['id', 'name', 'image_url', 'price', 'stock']
-            }]
+            }],
+           order: [
+               ['id', 'DESC']
+           ] 
         })
             .then(carts => {
                 res.status(200).json({ carts })
@@ -100,7 +103,28 @@ class cartController {
     }
 
     static checkout(req,res,next) {
-     
+        console.log(req.userData)
+        const id = req.userData.id
+        Cart.findAll({
+            where: { user_id: id},
+            include: [{
+                model: Product
+            }]
+        })
+        .then(data => {
+             data.forEach(cart => {
+                cart.status = true
+                cart.save()
+                
+                cart.Product.stock -= cart.quantity
+               
+                cart.Product.save()
+            })
+            res.status(200).json({msg: 'Checkout Success'})  
+        })
+        .catch(err => {
+            next(err)
+        })
     }
 
 }

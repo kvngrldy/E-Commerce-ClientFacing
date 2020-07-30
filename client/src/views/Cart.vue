@@ -62,18 +62,12 @@ export default {
   name: "Cart",
   methods: {
       checkout() {
-          let ids = []
-          let carts = this.$store.state.carts
-          for (let i = 0; i < carts.length; i++) {
-              ids.push(carts[i].id)
-          }
-          this.$store.dispatch('checkout', ids)
+          this.$store.dispatch('checkout')
       }
   },
   data() {
       return {
           totalprice: 0,
-         
       }
   },
   components: {
@@ -89,13 +83,15 @@ export default {
       },
       price() {
           let initialPrice = 0
-          let carts = this.$store.state.carts
-          for(let i = 0; i < carts.length; i++) {
-               initialPrice += (carts[i].Product.price * carts[i].quantity)
+          let totalPrice = 0
+        //   let carts = this.$store.state.carts
+        console.log(this.carts, `ini carts <><><><><>`)
+          for(let i = 0; i < this.carts.length; i++) {
+               initialPrice += (this.carts[i].Product.price * this.carts[i].quantity)
           }
-           this.totalprice = parseFloat(initialPrice).toLocaleString('id') 
+           totalPrice = parseFloat(initialPrice).toLocaleString('id') 
           
-          return this.totalprice
+          return totalPrice
       }
   }
 };

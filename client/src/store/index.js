@@ -24,16 +24,19 @@ export default new Vuex.Store({
     fetchProducts(state, payload) {
       state.products = payload
       console.log(this.state.products, `state`)
-      router.push({name: 'Home'})
+      //router.push({name: 'Home'})
     },
     fetchCart(state,payload) {
       state.carts = payload
       console.log(state.carts)
-      router.push({ name: 'Cart'})
+      //router.push({ name: 'Cart'})
+    },
+    updateCart(state,payload) {
+      state.carts.push(payload)
     },
     loggedIn(state,payload) {
       state.isLogin = true
-      router.push({name: 'Home'})
+      // router.push({name: 'Home'})
     },
     loggedOut(state,payload) {
       state.isLogin = false
@@ -111,7 +114,7 @@ export default new Vuex.Store({
         }
       })
       .then(({data}) => {
-        
+        context.dispatch('fetchCart', data.cart)
         Swal.fire(
           'Added!',
           'Product added to cart.',
@@ -136,7 +139,7 @@ export default new Vuex.Store({
         }
       })
       .then(({data}) => {
-        console.log(data.favorites, `<<< ini dari fetch Cart vuex`)
+        console.log(data.carts, `<<< ini dari fetch Cart vuex`)
         context.commit('fetchCart', data.carts)
       })
       .catch(err => {
@@ -216,13 +219,11 @@ export default new Vuex.Store({
       }
     },
     checkout(context,payload){
+      
       console.log(payload, `here`)
       axios({
         url: 'http://localhost:3000/cart/checkout',
         method: 'put',
-        body: {
-          ids: payload
-        },
         headers: {
           token: localStorage.token
         }
